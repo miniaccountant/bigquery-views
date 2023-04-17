@@ -1,6 +1,6 @@
 SELECT 
   `users` AS `USER`,
-  `users_settings`.`email` AS `USER_SETTINGS`,
+  `users_settings` AS `USER_SETTINGS`,
   `payments_settings` AS `PAYMENT_SETTINGS`,
   `invoices`.`document_id` AS `ID`,
   CAST(`invoices`.`DATE` AS STRING  FORMAT "YYYYMMDD") AS `DATE`, 
