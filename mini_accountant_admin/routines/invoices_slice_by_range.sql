@@ -25,5 +25,6 @@ SELECT `filtered_invoices`.`ID` AS `invoiceId`,
                 `transaction`.`SUM` * `transaction`.`EXCHANGE_RATE`
             )
         FROM UNNEST(`filtered_invoices`.`TRANSACTIONS`) AS `transaction`
-    ) AS `paidAmountInCurr`
+    ) AS `paidAmountInCurr`,
+    `filtered_invoices`.`CURRENCY` AS `invoiceCurrency`
 FROM `filtered_invoices`
