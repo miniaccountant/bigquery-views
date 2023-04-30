@@ -1,8 +1,13 @@
 # BigQuery Views
 
-## view for `firestore_export` (private)
+## view for `mini_accountant_admin` (private)
 
 - `mini_accountant_invoices`
+
+## routines for `mini_accountant_admin`
+
+- `invoices_slice_by_range`
+- `transactions_slice_by_range`
 
 ## view for `mini_accountant` (public)
 

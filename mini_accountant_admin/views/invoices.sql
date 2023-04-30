@@ -5,6 +5,7 @@ SELECT
   `invoices`.`document_id` AS `ID`,
   CAST(`invoices`.`DATE` AS STRING  FORMAT "YYYYMMDD") AS `DATE`, 
   `invoices`.`NUMBER`, 
+  `invoices`.`CURRENCY` AS `CURRENCY`,
   `customers` AS `CUSTOMER`,
   ARRAY (SELECT AS STRUCT
     REPLACE(JSON_EXTRACT_SCALAR(`positions`, '$.service'), 'services/', '') AS `ID`,
