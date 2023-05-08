@@ -1,0 +1,17 @@
+SELECT
+  document_name,
+  document_id,
+  timestamp,
+  operation,
+  JSON_EXTRACT_SCALAR(data, '$.companyName') AS COMPANYNAME,
+  JSON_EXTRACT_SCALAR(data, '$.idNumber') AS IDNUMBER,
+  JSON_EXTRACT_SCALAR(data, '$.email') AS EMAIL,
+  JSON_EXTRACT_SCALAR(data, '$.country') AS COUNTRY,
+  JSON_EXTRACT_SCALAR(data, '$.city') AS CITY,
+  JSON_EXTRACT_SCALAR(data, '$.addressLine1') AS ADDRESSLINE1,
+  JSON_EXTRACT_SCALAR(data, '$.addressLine2') AS ADDRESSLINE2,
+  JSON_EXTRACT_SCALAR(data, '$.currency') AS CURRENCY,
+  `invoicemaker-f5e1d.firestore_export.firestoreNumber`(JSON_EXTRACT_SCALAR(data, '$.taxFee')) AS TAXFEE,
+  JSON_EXTRACT_SCALAR(data, '$.user') AS USER
+FROM
+  `invoicemaker-f5e1d.firestore_export.usersSettings_raw_changelog`
