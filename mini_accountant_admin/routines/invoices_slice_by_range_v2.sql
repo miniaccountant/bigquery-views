@@ -1,15 +1,15 @@
 WITH `filtered_invoices` AS (
   SELECT *
-  FROM `invoicemaker-f5e1d.mini_accountant_admin.invoices` AS `invoice`
-  WHERE `invoice`.`DATE` >= CAST(fromDate AS STRING FORMAT "YYYYMMDD")
-    AND `invoice`.`DATE` <= CAST(toDate AS STRING FORMAT "YYYYMMDD")
+  FROM `invoicemaker-f5e1d.mini_accountant_admin.invoices_v2` AS `invoice`
+  WHERE `invoice`.`DATETIME` >= fromDate
+    AND `invoice`.`DATETIME` <= toDate
   ORDER BY `invoice`.`NUMBER`
 )
 SELECT `filtered_invoices`.`ID` AS `invoiceId`,
   `filtered_invoices`.`USER` AS `user`,
   `filtered_invoices`.`USER_SETTINGS` AS `user_settings`,
   `filtered_invoices`.`PAYMENT_SETTINGS` AS `payment_settings`,
-  PARSE_DATE ("%Y%m%d", `filtered_invoices`.`DATE`) AS `invoiceDate`,
+  DATE(`filtered_invoices`.`DATETIME`, tzid) AS `invoiceDate`,
   `filtered_invoices`.`NUMBER` AS `invoiceNumber`,
   (
     SELECT SUM(`position`.`PRICE`)

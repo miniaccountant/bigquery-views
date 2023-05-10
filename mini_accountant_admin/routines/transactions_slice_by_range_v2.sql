@@ -1,20 +1,20 @@
 WITH `filtered_invoices` AS (
   SELECT *
-  FROM `invoicemaker-f5e1d.mini_accountant_admin.invoices` AS `invoice`
+  FROM `invoicemaker-f5e1d.mini_accountant_admin.invoices_v2` AS `invoice`
   WHERE (
       SELECT ARRAY_LENGTH(
           ARRAY(
-            SELECT `transaction`.`DATE`
+            SELECT `transaction`.`DATETIME`
             FROM UNNEST(`invoice`.`TRANSACTIONS`) AS `transaction`
-            WHERE `transaction`.`DATE` >= CAST(fromDate AS STRING FORMAT "YYYYMMDD")
-              AND `transaction`.`DATE` <= CAST(toDate AS STRING FORMAT "YYYYMMDD")
+            WHERE `transaction`.`DATETIME` >= fromDate
+              AND `transaction`.`DATETIME` <= toDate
           )
         )
     ) != 0
   ORDER BY `invoice`.`NUMBER`
 )
 SELECT `filtered_invoices`.`ID` AS `invoiceId`,
-  PARSE_DATE ("%Y%m%d", `filtered_invoices`.`DATE`) AS `invoiceDate`,
+  DATE(`filtered_invoices`.`DATETIME`, tzid) AS `invoiceDate`,
   `filtered_invoices`.`NUMBER` AS `invoiceNumber`,
   (
     SELECT SUM(`position`.`PRICE`)
@@ -25,7 +25,7 @@ SELECT `filtered_invoices`.`ID` AS `invoiceId`,
   `filtered_invoices`.`PAYMENT_SETTINGS` AS `paymentSettings`,
   `filtered_invoices`.`CUSTOMER` AS `customer`,
   `filtered_transacions`.`ID` AS `transactionId`,
-  PARSE_DATE ("%Y%m%d", `filtered_transacions`.`DATE`) AS `transactionDate`,
+  DATE(`filtered_transacions`.`DATETIME`, tzid) AS `transactionDate`,
   `filtered_transacions`.`SUM` AS `transactionSum`,
   `filtered_transacions`.`EXCHANGE_RATE` AS `transactionExchangeRate`
 FROM `filtered_invoices`
@@ -33,8 +33,8 @@ FROM `filtered_invoices`
     ARRAY(
       SELECT AS STRUCT *
       FROM `filtered_invoices`.`TRANSACTIONS` AS `transaction` WITH OFFSET AS `ID`
-      WHERE `transaction`.`DATE` >= CAST(fromDate AS STRING FORMAT "YYYYMMDD")
-        AND `transaction`.`DATE` <= CAST(toDate AS STRING FORMAT "YYYYMMDD")
+      WHERE `transaction`.`DATETIME` >= fromDate
+        AND `transaction`.`DATETIME` <= toDate
       ORDER BY `ID`
     )
   ) AS `filtered_transacions`

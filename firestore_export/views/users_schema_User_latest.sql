@@ -5,58 +5,46 @@
 --   event_id: The event that wrote this row.
 --   <schema-fields>: This can be one, many, or no typed-columns
 --                    corresponding to fields defined in the schema.
-SELECT
-  document_name,
+SELECT document_name,
   document_id,
   timestamp,
   operation,
   EMAIL,
   INVOICEMTX,
   FCMTOKEN
-FROM
-  (
-    SELECT
-      document_name,
+FROM (
+    SELECT document_name,
       document_id,
       FIRST_VALUE(timestamp) OVER(
         PARTITION BY document_name
-        ORDER BY
-          timestamp DESC
+        ORDER BY timestamp DESC
       ) AS timestamp,
       FIRST_VALUE(operation) OVER(
         PARTITION BY document_name
-        ORDER BY
-          timestamp DESC
+        ORDER BY timestamp DESC
       ) AS operation,
       FIRST_VALUE(operation) OVER(
         PARTITION BY document_name
-        ORDER BY
-          timestamp DESC
+        ORDER BY timestamp DESC
       ) = "DELETE" AS is_deleted,
       FIRST_VALUE(JSON_EXTRACT_SCALAR(data, '$.email')) OVER(
         PARTITION BY document_name
-        ORDER BY
-          timestamp DESC
+        ORDER BY timestamp DESC
       ) AS EMAIL,
       `invoicemaker-f5e1d.firestore_export.firestoreNumber`(
         FIRST_VALUE(JSON_EXTRACT_SCALAR(data, '$.invoiceMtx')) OVER(
           PARTITION BY document_name
-          ORDER BY
-            timestamp DESC
+          ORDER BY timestamp DESC
         )
       ) AS INVOICEMTX,
       FIRST_VALUE(JSON_EXTRACT_SCALAR(data, '$.fcmToken')) OVER(
         PARTITION BY document_name
-        ORDER BY
-          timestamp DESC
+        ORDER BY timestamp DESC
       ) AS FCMTOKEN
-    FROM
-      `invoicemaker-f5e1d.firestore_export.users_raw_latest`
+    FROM `invoicemaker-f5e1d.firestore_export.users_raw_latest`
   )
-WHERE
-  NOT is_deleted
-GROUP BY
-  document_name,
+WHERE NOT is_deleted
+GROUP BY document_name,
   document_id,
   timestamp,
   operation,

@@ -1,5 +1,4 @@
-SELECT
-  document_name,
+SELECT document_name,
   document_id,
   timestamp,
   operation,
@@ -12,5 +11,4 @@ SELECT
   JSON_EXTRACT_SCALAR(data, '$.invoiceTemplate') AS INVOICETEMPLATE,
   JSON_EXTRACT_SCALAR(data, '$.paymentSettings') AS PAYMENTSETTINGS,
   JSON_EXTRACT_SCALAR(data, '$.user') AS USER
-FROM
-  `invoicemaker-f5e1d.firestore_export.customers_raw_changelog`
+FROM `invoicemaker-f5e1d.firestore_export.customers_raw_changelog`
