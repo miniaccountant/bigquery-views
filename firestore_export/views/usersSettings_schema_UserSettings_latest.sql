@@ -9,8 +9,8 @@ SELECT document_name,
   document_id,
   timestamp,
   operation,
-  COMPANYNAME,
   IDNUMBER,
+  COMPANYNAME,
   EMAIL,
   COUNTRY,
   CITY,
@@ -18,6 +18,8 @@ SELECT document_name,
   ADDRESSLINE2,
   CURRENCY,
   TAXFEE,
+  USE_TABLE_FEE,
+  TABLE_FEE,
   USER
 FROM (
     SELECT document_name,
@@ -34,14 +36,14 @@ FROM (
         PARTITION BY document_name
         ORDER BY timestamp DESC
       ) = "DELETE" AS is_deleted,
-      FIRST_VALUE(JSON_EXTRACT_SCALAR(data, '$.companyName')) OVER(
-        PARTITION BY document_name
-        ORDER BY timestamp DESC
-      ) AS COMPANYNAME,
       FIRST_VALUE(JSON_EXTRACT_SCALAR(data, '$.idNumber')) OVER(
         PARTITION BY document_name
         ORDER BY timestamp DESC
       ) AS IDNUMBER,
+      FIRST_VALUE(JSON_EXTRACT_SCALAR(data, '$.companyName')) OVER(
+        PARTITION BY document_name
+        ORDER BY timestamp DESC
+      ) AS COMPANYNAME,
       FIRST_VALUE(JSON_EXTRACT_SCALAR(data, '$.email')) OVER(
         PARTITION BY document_name
         ORDER BY timestamp DESC
@@ -72,6 +74,16 @@ FROM (
           ORDER BY timestamp DESC
         )
       ) AS TAXFEE,
+      `invoicemaker-f5e1d.firestore_export.firestoreBoolean`(
+        FIRST_VALUE(JSON_EXTRACT_SCALAR(data, '$.useTableFee')) OVER(
+          PARTITION BY document_name
+          ORDER BY timestamp DESC
+        )
+      ) AS USE_TABLE_FEE,
+      FIRST_VALUE(JSON_EXTRACT(data, '$.tableFee')) OVER(
+        PARTITION BY document_name
+        ORDER BY timestamp DESC
+      ) AS TABLE_FEE,
       FIRST_VALUE(JSON_EXTRACT_SCALAR(data, '$.user')) OVER(
         PARTITION BY document_name
         ORDER BY timestamp DESC
@@ -83,8 +95,8 @@ GROUP BY document_name,
   document_id,
   timestamp,
   operation,
-  COMPANYNAME,
   IDNUMBER,
+  COMPANYNAME,
   EMAIL,
   COUNTRY,
   CITY,
@@ -92,4 +104,6 @@ GROUP BY document_name,
   ADDRESSLINE2,
   CURRENCY,
   TAXFEE,
+  USE_TABLE_FEE,
+  TABLE_FEE,
   USER
