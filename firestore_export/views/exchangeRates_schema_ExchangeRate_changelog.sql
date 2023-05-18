@@ -1,0 +1,15 @@
+SELECT document_name,
+  document_id,
+  timestamp,
+  operation,
+  JSON_EXTRACT_SCALAR(data, '$.indexKey') AS INDEX_KEY,
+  `invoicemaker-f5e1d.firestore_export.firestoreTimestamp`(JSON_EXTRACT(data, '$.date')) AS DATE,
+  `invoicemaker-f5e1d.firestore_export.firestoreTimestamp`(JSON_EXTRACT(data, '$.origDate')) AS ORIG_DATE,
+  JSON_EXTRACT_SCALAR(data, '$.from') AS FROM_CURRENCY,
+  JSON_EXTRACT_SCALAR(data, '$.to') AS TO_CURRENCY,
+  `invoicemaker-f5e1d.firestore_export.firestoreNumber`(JSON_EXTRACT_SCALAR(data, '$.rate')) AS RATE,
+  JSON_EXTRACT_SCALAR(data, '$.info') AS INFO,
+  `invoicemaker-f5e1d.firestore_export.firestoreTimestamp`(JSON_EXTRACT(data, '$.loadedAt')) AS LOADED_AT,
+  JSON_EXTRACT_SCALAR(data, '$.loadedFrom') AS LOADED_FROM,
+  JSON_EXTRACT(data, '$.metadata') AS METADATA
+FROM `invoicemaker-f5e1d.firestore_export.exchangeRates_raw_changelog`
