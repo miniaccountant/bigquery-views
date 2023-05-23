@@ -37,8 +37,8 @@ SELECT REPLACE(`invoices`.`USER`, 'users/', '') AS `USER`,
       ) AS `transactions`
   ) AS `TRANSACTIONS`
 FROM `invoicemaker-f5e1d.firestore_export.invoices_schema_Invoice_latest` AS `invoices`
-  INNER JOIN `invoicemaker-f5e1d.firestore_export.customers_schema_Customer_latest` AS `customers` ON `invoices`.`CUSTOMER` = CONCAT("customers/", `customers`.`document_id`)
-  INNER JOIN `invoicemaker-f5e1d.firestore_export.usersSettings_schema_UserSettings_latest` AS `users_settings` ON `invoices`.`USER` = CONCAT("users/", `users_settings`.`document_id`)
-  INNER JOIN `access` ON `access`.`USER_ID` = REPLACE(`invoices`.`USER`, 'users/', '')
+  LEFT JOIN `invoicemaker-f5e1d.firestore_export.customers_schema_Customer_latest` AS `customers` ON `invoices`.`CUSTOMER` = CONCAT("customers/", `customers`.`document_id`)
+  LEFT JOIN `invoicemaker-f5e1d.firestore_export.usersSettings_schema_UserSettings_latest` AS `users_settings` ON `invoices`.`USER` = CONCAT("users/", `users_settings`.`document_id`)
+  LEFT JOIN `access` ON `access`.`USER_ID` = REPLACE(`invoices`.`USER`, 'users/', '')
 WHERE `access`.`USER_ID` = REPLACE(`invoices`.`USER`, 'users/', '')
 ORDER BY `NUMBER`

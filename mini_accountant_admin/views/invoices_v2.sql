@@ -26,10 +26,10 @@ SELECT `users` AS `USER`,
       ) AS `transactions`
   ) AS `TRANSACTIONS`
 FROM `invoicemaker-f5e1d.firestore_export.invoices_schema_Invoice_latest` AS `invoices`
-  INNER JOIN `invoicemaker-f5e1d.firestore_export.customers_schema_Customer_latest` AS `customers` ON `invoices`.`CUSTOMER` = CONCAT("customers/", `customers`.`document_id`)
-  INNER JOIN `invoicemaker-f5e1d.firestore_export.users_schema_User_latest` AS `users` ON `invoices`.`USER` = CONCAT("users/", `users`.`document_id`)
-  INNER JOIN `invoicemaker-f5e1d.firestore_export.usersSettings_schema_UserSettings_latest` AS `users_settings` ON `invoices`.`USER` = CONCAT("users/", `users_settings`.`document_id`)
-  INNER JOIN `invoicemaker-f5e1d.firestore_export.paymentsSettings_schema_PaymentSettings_latest` AS `payments_settings` ON `customers`.`paymentSettings` = CONCAT(
+  LEFT JOIN `invoicemaker-f5e1d.firestore_export.customers_schema_Customer_latest` AS `customers` ON `invoices`.`CUSTOMER` = CONCAT("customers/", `customers`.`document_id`)
+  LEFT JOIN `invoicemaker-f5e1d.firestore_export.users_schema_User_latest` AS `users` ON `invoices`.`USER` = CONCAT("users/", `users`.`document_id`)
+  LEFT JOIN `invoicemaker-f5e1d.firestore_export.usersSettings_schema_UserSettings_latest` AS `users_settings` ON `invoices`.`USER` = CONCAT("users/", `users_settings`.`document_id`)
+  LEFT JOIN `invoicemaker-f5e1d.firestore_export.paymentsSettings_schema_PaymentSettings_latest` AS `payments_settings` ON `customers`.`paymentSettings` = CONCAT(
     "paymentsSettings/",
     `payments_settings`.`document_id`
   )
