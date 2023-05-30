@@ -1,1 +1,1 @@
-SAFE_CAST(json AS BOOLEAN)
+CREATE OR REPLACE FUNCTION `invoicemaker-f5e1d.firestore_export.firestoreBoolean`(json STRING) RETURNS BOOL AS (SAFE_CAST(json AS BOOLEAN));

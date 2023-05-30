@@ -1,1 +1,1 @@
-SAFE_CAST(json AS NUMERIC)
+CREATE OR REPLACE FUNCTION `invoicemaker-f5e1d.firestore_export.firestoreNumber`(json STRING) RETURNS NUMERIC AS (SAFE_CAST(json AS NUMERIC));
