@@ -22,7 +22,9 @@ CREATE OR REPLACE TABLE FUNCTION `invoicemaker-f5e1d.mini_accountant_admin.trans
       DATE(`filtered_invoices`.`DATETIME`, tzid) AS `invoiceDate`,
       `filtered_invoices`.`NUMBER` AS `invoiceNumber`,
       (
-        SELECT SUM(`position`.`PRICE`)
+        SELECT SUM(
+            `position`.`PRICE` * (100 + COALESCE(`position`.`VAT`) / 100)
+          )
         FROM UNNEST(`filtered_invoices`.`POSITIONS`) AS `position`
       ) AS `invoiceAmount`,
       `filtered_invoices`.`CURRENCY` AS `invoiceCurrency`,

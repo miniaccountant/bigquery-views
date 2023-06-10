@@ -11,7 +11,8 @@ SELECT document_name,
   operation,
   EMAIL,
   INVOICEMTX,
-  FCMTOKEN
+  FCMTOKEN,
+  CUSTOM_EXCHANGE_SERVER
 FROM (
     SELECT document_name,
       document_id,
@@ -40,7 +41,13 @@ FROM (
       FIRST_VALUE(JSON_EXTRACT_SCALAR(data, '$.fcmToken')) OVER(
         PARTITION BY document_name
         ORDER BY timestamp DESC
-      ) AS FCMTOKEN
+      ) AS FCMTOKEN,
+      FIRST_VALUE(
+        JSON_EXTRACT_SCALAR(data, '$.customExchangeServer')
+      ) OVER(
+        PARTITION BY document_name
+        ORDER BY timestamp DESC
+      ) AS CUSTOM_EXCHANGE_SERVER
     FROM `invoicemaker-f5e1d.firestore_export.users_raw_latest`
   )
 WHERE NOT is_deleted
@@ -50,4 +57,5 @@ GROUP BY document_name,
   operation,
   EMAIL,
   INVOICEMTX,
-  FCMTOKEN
+  FCMTOKEN,
+  CUSTOM_EXCHANGE_SERVER

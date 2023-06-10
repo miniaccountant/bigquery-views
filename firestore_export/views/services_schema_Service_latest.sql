@@ -11,6 +11,7 @@ SELECT document_name,
   operation,
   NAME,
   PRICE,
+  VAT,
   CURRENCY,
   USER
 FROM (
@@ -38,6 +39,12 @@ FROM (
           ORDER BY timestamp DESC
         )
       ) AS PRICE,
+      `invoicemaker-f5e1d.firestore_export.firestoreNumber`(
+        FIRST_VALUE(JSON_EXTRACT_SCALAR(data, '$.vat')) OVER(
+          PARTITION BY document_name
+          ORDER BY timestamp DESC
+        )
+      ) AS VAT,
       FIRST_VALUE(JSON_EXTRACT_SCALAR(data, '$.currency')) OVER(
         PARTITION BY document_name
         ORDER BY timestamp DESC
@@ -55,5 +62,6 @@ GROUP BY document_name,
   operation,
   NAME,
   PRICE,
+  VAT,
   CURRENCY,
   USER

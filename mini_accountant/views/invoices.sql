@@ -25,7 +25,11 @@ SELECT REPLACE(`invoices`.`USER`, 'users/', '') AS `USER`,
       ) AS `ID`,
       JSON_EXTRACT_SCALAR(`positions`, '$.data.name') AS `NAME`,
       JSON_EXTRACT_SCALAR(`positions`, '$.data.currency') AS `CURRENCY`,
-      `invoicemaker-f5e1d`.`firestore_export`.`firestoreNumber`(JSON_EXTRACT(`positions`, '$.data.price')) AS `PRICE`
+      `invoicemaker-f5e1d`.`firestore_export`.`firestoreNumber`(JSON_EXTRACT(`positions`, '$.data.price')) AS `PRICE`,
+      COALESCE(
+        `invoicemaker-f5e1d`.`firestore_export`.`firestoreNumber`(JSON_EXTRACT(`positions`, '$.data.vat')),
+        0
+      ) AS `VAT`
     FROM UNNEST(JSON_EXTRACT_ARRAY(`invoices`.`POSITIONS`, '$')) AS `positions`
   ) AS `POSITIONS`,
   ARRAY (

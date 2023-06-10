@@ -16,13 +16,18 @@ CREATE OR REPLACE TABLE FUNCTION `invoicemaker-f5e1d.mini_accountant.positions_s
       DATE(`filtered_invoices`.`DATETIME`, tzid) AS `invoiceDate`,
       `filtered_invoices`.`NUMBER` AS `invoiceNumber`,
       (
-        SELECT SUM(`position`.`PRICE`)
+        SELECT SUM(
+            (
+              `position`.`PRICE` * (100 + COALESCE(`position`.`VAT`, 0)) / 100
+            )
+          )
         FROM UNNEST(`filtered_invoices`.`POSITIONS`) AS `position`
       ) AS `invoiceAmount`,
       `filtered_invoices`.`CUSTOMER` AS `customer`,
       `filtered_positions`.`ID` AS `positionId`,
       `filtered_positions`.`NAME` AS `positionName`,
       `filtered_positions`.`PRICE` AS `positionPrice`,
+      `filtered_positions`.`VAT` AS `positionVat`,
       `filtered_positions`.`CURRENCY` AS `positionCurrency`
     FROM `filtered_invoices`
       CROSS JOIN UNNEST(`filtered_invoices`.`POSITIONS`) AS `filtered_positions`
