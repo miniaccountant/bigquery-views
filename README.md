@@ -2,20 +2,21 @@
 
 ## view for `mini_accountant_admin` (private)
 
-- `mini_accountant_invoices`
+- `invoices`
 
 ## routines for `mini_accountant_admin`
 
-- `invoices_slice_by_range`
-- `transactions_slice_by_range`
+- `calculateVatForTransaction`
+- `invoices_slice_by_range_v2`
+- `transactions_slice_by_range_v2`
 
 ## view for `mini_accountant` (public)
 
 - `invoices`
-- `users`
 
 ## routines for `mini_accountant`
 
+- `calculateVatForTransaction`
 - `invoices_slice_by_range`
 - `positions_slice_by_range`
 - `transactions_slice_by_range`
