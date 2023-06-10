@@ -43,6 +43,16 @@ CREATE OR REPLACE TABLE FUNCTION `invoicemaker-f5e1d.mini_accountant.transaction
       `filtered_transacions`.`ID` AS `transactionId`,
       DATE(`filtered_transacions`.`DATETIME`, tzid) AS `transactionDate`,
       `filtered_transacions`.`SUM` AS `transactionSum`,
+      `invoicemaker-f5e1d.mini_accountant.calculateVatForTransaction`(
+        `filtered_transacions`.`ID`,
+        (
+          SELECT SUM(
+              `position`.`PRICE` * (COALESCE(`position`.`VAT`, 0) / 100)
+            )
+          FROM UNNEST(`filtered_invoices`.`POSITIONS`) AS `position`
+        ),
+        `filtered_invoices`.`TRANSACTIONS`
+      ) AS `transactionVat`,
       `filtered_transacions`.`EXCHANGE_RATE` AS `transactionExchangeRate`
     FROM `filtered_invoices`
       CROSS JOIN UNNEST(
