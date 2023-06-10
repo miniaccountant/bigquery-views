@@ -17,12 +17,26 @@ CREATE OR REPLACE TABLE FUNCTION `invoicemaker-f5e1d.mini_accountant.invoices_sl
       `filtered_invoices`.`NUMBER` AS `invoiceNumber`,
       (
         SELECT SUM(
+            (`position`.`PRICE`)
+          )
+        FROM UNNEST(`filtered_invoices`.`POSITIONS`) AS `position`
+      ) AS `invoiceAmountRaw`,
+      (
+        SELECT SUM(
             (
               `position`.`PRICE` * (100 + COALESCE(`position`.`VAT`, 0)) / 100
             )
           )
         FROM UNNEST(`filtered_invoices`.`POSITIONS`) AS `position`
       ) AS `invoiceAmount`,
+      (
+        SELECT SUM(
+            (
+              `position`.`PRICE` * (COALESCE(`position`.`VAT`, 0)) / 100
+            )
+          )
+        FROM UNNEST(`filtered_invoices`.`POSITIONS`) AS `position`
+      ) AS `invoiceVat`,
       `filtered_invoices`.`CUSTOMER` AS `customer`,
       (
         SELECT SUM(`transaction`.`SUM`)

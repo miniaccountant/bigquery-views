@@ -22,11 +22,21 @@ CREATE OR REPLACE TABLE FUNCTION `invoicemaker-f5e1d.mini_accountant_admin.trans
       DATE(`filtered_invoices`.`DATETIME`, tzid) AS `invoiceDate`,
       `filtered_invoices`.`NUMBER` AS `invoiceNumber`,
       (
+        SELECT SUM(`position`.`PRICE`)
+        FROM UNNEST(`filtered_invoices`.`POSITIONS`) AS `position`
+      ) AS `invoiceAmountRaw`,
+      (
         SELECT SUM(
             `position`.`PRICE` * (100 + COALESCE(`position`.`VAT`) / 100)
           )
         FROM UNNEST(`filtered_invoices`.`POSITIONS`) AS `position`
       ) AS `invoiceAmount`,
+      (
+        SELECT SUM(
+            `position`.`PRICE` * (COALESCE(`position`.`VAT`) / 100)
+          )
+        FROM UNNEST(`filtered_invoices`.`POSITIONS`) AS `position`
+      ) AS `invoiceVat`,
       `filtered_invoices`.`CURRENCY` AS `invoiceCurrency`,
       `filtered_invoices`.`USER` AS `user`,
       `filtered_invoices`.`PAYMENT_SETTINGS` AS `paymentSettings`,

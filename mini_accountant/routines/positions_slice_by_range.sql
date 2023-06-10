@@ -16,6 +16,10 @@ CREATE OR REPLACE TABLE FUNCTION `invoicemaker-f5e1d.mini_accountant.positions_s
       DATE(`filtered_invoices`.`DATETIME`, tzid) AS `invoiceDate`,
       `filtered_invoices`.`NUMBER` AS `invoiceNumber`,
       (
+        SELECT SUM((`position`.`PRICE`))
+        FROM UNNEST(`filtered_invoices`.`POSITIONS`) AS `position`
+      ) AS `invoiceAmountRaw`,
+      (
         SELECT SUM(
             (
               `position`.`PRICE` * (100 + COALESCE(`position`.`VAT`, 0)) / 100
@@ -23,6 +27,14 @@ CREATE OR REPLACE TABLE FUNCTION `invoicemaker-f5e1d.mini_accountant.positions_s
           )
         FROM UNNEST(`filtered_invoices`.`POSITIONS`) AS `position`
       ) AS `invoiceAmount`,
+      (
+        SELECT SUM(
+            (
+              `position`.`PRICE` * (COALESCE(`position`.`VAT`, 0)) / 100
+            )
+          )
+        FROM UNNEST(`filtered_invoices`.`POSITIONS`) AS `position`
+      ) AS `invoiceVat`,
       `filtered_invoices`.`CUSTOMER` AS `customer`,
       `filtered_positions`.`ID` AS `positionId`,
       `filtered_positions`.`NAME` AS `positionName`,
