@@ -42,6 +42,10 @@ FROM (
         PARTITION BY document_name
         ORDER BY timestamp DESC
       ) AS FCMTOKEN,
+      FIRST_VALUE(JSON_EXTRACT_SCALAR(data, '$.theme')) OVER(
+        PARTITION BY document_name
+        ORDER BY timestamp DESC
+      ) AS THEME,
       FIRST_VALUE(
         JSON_EXTRACT_SCALAR(data, '$.customExchangeServer')
       ) OVER(
