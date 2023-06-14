@@ -22,7 +22,7 @@ CREATE OR REPLACE TABLE FUNCTION `invoicemaker-f5e1d.mini_accountant_admin.invoi
       ) AS `invoiceAmountRaw`,
       (
         SELECT SUM(
-            `position`.`PRICE` * (100 + COALESCE(`position`.`VAT`, 0) / 100)
+            `position`.`PRICE` * ((100 + COALESCE(`position`.`VAT`, 0)) / 100)
           )
         FROM UNNEST(`filtered_invoices`.`POSITIONS`) AS `position`
       ) AS `invoiceAmount`,
