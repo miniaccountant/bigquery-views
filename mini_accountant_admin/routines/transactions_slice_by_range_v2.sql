@@ -29,7 +29,7 @@ CREATE OR REPLACE TABLE FUNCTION `invoicemaker-f5e1d.mini_accountant_admin.trans
       ) AS `invoiceAmountRaw`,
       (
         SELECT SUM(
-            `position`.`PRICE` * COALESCE(`position`.`QUANTITY`, 1) * (100 + COALESCE(`position`.`VAT`) / 100)
+            `position`.`PRICE` * COALESCE(`position`.`QUANTITY`, 1) * ((100 + COALESCE(`position`.`VAT`)) / 100)
           )
         FROM UNNEST(`filtered_invoices`.`POSITIONS`) AS `position`
       ) AS `invoiceAmount`,
@@ -48,11 +48,13 @@ CREATE OR REPLACE TABLE FUNCTION `invoicemaker-f5e1d.mini_accountant_admin.trans
       `filtered_transacions`.`SUM` AS `transactionSum`,
       `invoicemaker-f5e1d.mini_accountant_admin.calculateVatForTransaction`(
         `filtered_transacions`.`ID`,
-        (
-          SELECT SUM(
-              `position`.`PRICE` * COALESCE(`position`.`QUANTITY`, 1) * (COALESCE(`position`.`VAT`, 0) / 100)
-            )
-          FROM UNNEST(`filtered_invoices`.`POSITIONS`) AS `position`
+        CAST(
+          (
+            SELECT SUM(
+                `position`.`PRICE` * COALESCE(`position`.`QUANTITY`, 1) * (COALESCE(`position`.`VAT`, 0) / 100)
+              )
+            FROM UNNEST(`filtered_invoices`.`POSITIONS`) AS `position`
+          ) AS FLOAT64
         ),
         `filtered_invoices`.`TRANSACTIONS`
       ) AS `transactionVat`,
