@@ -16,6 +16,9 @@ SELECT document_name,
   ADDRESSLINE2,
   CURRENCY,
   INVOICETEMPLATE,
+  INVOICETABLECOLUMNS,
+  INVOICESIGN,
+  INVOICECOLOR,
   PAYMENTSETTINGS,
   USER
 FROM (
@@ -61,6 +64,20 @@ FROM (
         PARTITION BY document_name
         ORDER BY timestamp DESC
       ) AS INVOICETEMPLATE,
+      FIRST_VALUE(JSON_EXTRACT(data, '$.invoiceTableColumns')) OVER(
+        PARTITION BY document_name
+        ORDER BY timestamp DESC
+      ) AS INVOICETABLECOLUMNS,
+      `invoicemaker-f5e1d.firestore_export.firestoreBoolean`(
+        FIRST_VALUE(JSON_EXTRACT(data, '$.invoiceSign')) OVER(
+          PARTITION BY document_name
+          ORDER BY timestamp DESC
+        )
+      ) AS INVOICESIGN,
+      FIRST_VALUE(JSON_EXTRACT_SCALAR(data, '$.invoiceColor')) OVER(
+        PARTITION BY document_name
+        ORDER BY timestamp DESC
+      ) AS INVOICECOLOR,
       FIRST_VALUE(JSON_EXTRACT_SCALAR(data, '$.paymentSettings')) OVER(
         PARTITION BY document_name
         ORDER BY timestamp DESC
@@ -83,5 +100,8 @@ GROUP BY document_name,
   ADDRESSLINE2,
   CURRENCY,
   INVOICETEMPLATE,
+  INVOICETABLECOLUMNS,
+  INVOICESIGN,
+  INVOICECOLOR,
   PAYMENTSETTINGS,
   USER

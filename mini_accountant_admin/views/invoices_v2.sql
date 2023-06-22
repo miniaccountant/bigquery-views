@@ -18,7 +18,11 @@ SELECT `users` AS `USER`,
       COALESCE(
         `invoicemaker-f5e1d`.`firestore_export`.`firestoreNumber`(JSON_EXTRACT(`positions`, '$.data.vat')),
         0
-      ) AS `VAT`
+      ) AS `VAT`,
+      COALESCE(
+        `invoicemaker-f5e1d`.`firestore_export`.`firestoreNumber`(JSON_EXTRACT(`positions`, '$.quantity')),
+        1
+      ) AS `QUANTITY`
     FROM UNNEST(JSON_EXTRACT_ARRAY(`invoices`.`POSITIONS`, '$')) AS `positions`
   ) AS `POSITIONS`,
   ARRAY (
